@@ -6,16 +6,16 @@ class _BisecEntry(object):
         self.func = func
         self.a = punto_a
         self.b = punto_b
-        self.f_a = round(func(punto_a), num_decs)
-        self.f_b = round(func(punto_b), num_decs)
+        self.f_a = func(punto_a)
+        self.f_b = func(punto_b)
         self.c = self._punto_medio(punto_a, punto_b)
-        self.f_c = round(func(self.c), num_decs)
+        self.f_c = func(self.c)
         self.faxfb = self.f_a * self.f_b
     
     def biseccionar(self):
         """Devolver tupla de nuevos puntos A y B para encontrar
         nuevo intervalo."""
-        if self.f_c < 0 and self.f_a < 0:
-            return self.c, self.b
-        else:
+        if self.f_a > 0 and self.f_c < 0:
             return self.a, self.c
+        else:
+            return self.c, self.b
