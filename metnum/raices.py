@@ -35,8 +35,8 @@ def punto_fijo(aproximacion, func, iteraciones=30, debug=False, min_error=NUM_MI
     error = 0
     for i in range(iteraciones):
         temp = nuevo = func(aproximacion)
-        debug_print("Iteracion %d : x = %.5f" % (i+1, temp), debug)
         error = calcular_error(nuevo, viejo)
+        debug_print("Iteracion %d : x = %.5f \t Error: %f" % (i+1, temp, error), debug)
         viejo = nuevo
         aproximacion = temp
         if error <= min_error:
@@ -46,7 +46,8 @@ def punto_fijo(aproximacion, func, iteraciones=30, debug=False, min_error=NUM_MI
     debug_print("Fin funcion punto_fijo", debug)
     return aproximacion, error
 
-def biseccion(punto_a, punto_b, func, iteraciones=30, debug=False, min_error=NUM_MIN):
+def biseccion(punto_a, punto_b, func, iteraciones=30,
+              debug=False, min_error=NUM_MIN):
     """Aproximar la funcion func utilizando el metodo de biseccion,
     tomando el intervalo comprendido por los puntos punto_a y punto_b.
     Devuelve tupla (<aproximacion>, <error>)
@@ -79,3 +80,62 @@ A=%.5f\tB=%.5f\tf(A)=%.5f\tf(B)=%.5f\tC=%.5f\tf(C)=%.5f\terror=%.5f\
         
     debug_print("Fin funcion biseccion", debug)
     return entrada.c, error
+
+def newton(punto, func, funcion_derivada, iteraciones=30,
+           debug=False, min_error=NUM_MIN):
+    """Aproximar la funcion func en punto utilizando el metodo de Newton,
+    utilizando como derivada funcion_derivada."""
+    
+    nuevo = viejo = error = float(0)
+    
+    for iteracion in range(iteraciones):
+        punto = nuevo = func(punto)
+        error = calcular_error(nuevo, viejo)
+        
+        debug_print("Iteracion %d : x = %f \t Error: %f" % (iteracion+1, punto, error), debug)
+        
+        if punto != 0:
+            punto = punto - (func(punto) / funcion_derivada(punto))
+        else:
+            punto+=min_error
+            
+        viejo = nuevo
+        
+        if error <= min_error:
+            return punto, error
+    
+    return punto, error
+
+def secante(punto1, punto2, func, iteraciones=30,
+            debug=False, min_error=NUM_MIN):
+    """Aproximar la funcion func en punto utilizando el metodo de secante."""
+    nuevo = viejo = error = float(0)
+    
+    for iteracion in range(iteraciones):
+        aprox1 = func(punto1)
+        nuevo = aprox2 = func(punto2)
+        
+        error = calcular_error(nuevo, viejo)
+        
+        debug_print("Iteracion %d : Aproximacion 1: %f \t Aproximacion 2: %f \t Error: %f" % \
+                    (iteracion+1, punto1, punto2, error), debug)
+        
+        if aprox1 - aprox2 != 0:
+            temp = punto1
+            # Si se lanza ZeroDivisionError, regresar valores
+            try:
+                punto1 = punto1 - (aprox1 * (punto1 - punto2)) / (aprox1 - aprox2)
+            except ZeroDivisionError:
+                return punto2, error
+            
+            punto2 = temp
+        else:
+            punto1+=min_error
+        
+        if error <= min_error:
+            return punto2, error
+        
+        viejo = aprox2
+        
+    return punto1, error
+        
