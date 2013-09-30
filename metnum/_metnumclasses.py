@@ -15,7 +15,9 @@ class _BisecEntry(object):
     def biseccionar(self):
         """Devolver tupla de nuevos puntos A y B para encontrar
         nuevo intervalo."""
-        if self.f_a > 0 and self.f_c < 0:
+        temp = self.f_a * self.f_c
+        
+        if temp < 0:
             return self.a, self.c
         else:
             return self.c, self.b
