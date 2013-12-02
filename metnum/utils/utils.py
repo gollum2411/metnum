@@ -11,3 +11,8 @@ def calcular_error(nuevo, viejo):
         return math.fabs((nuevo - viejo)/nuevo)
     except ZeroDivisionError:
         return 0
+
+def cstyle_for(first, test, update):
+    while test(first):
+        yield first
+        first = update(first)
